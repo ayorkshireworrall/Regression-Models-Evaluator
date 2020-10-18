@@ -1,19 +1,22 @@
 # Polynomial Regression
 
-class PolynomialRegression:
+from .regression import Regression
+
+class PolynomialRegression(Regression):
     def __init__(self, dataset):        
-        X = dataset.iloc[:, :-1].values
-        y = dataset.iloc[:, -1].values
+        X, y = self.extract_variables(dataset)
         
         from sklearn.model_selection import train_test_split
-        X_train, self.X_test, y_train, self.y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
         
         from sklearn.preprocessing import PolynomialFeatures
-        from sklearn.linear_model import LinearRegression
         self.poly_reg = PolynomialFeatures(degree = 4)
-        X_poly = self.poly_reg.fit_transform(X_train)
+        from sklearn.linear_model import LinearRegression
         self.regressor = LinearRegression()
-        self.regressor.fit(X_poly, y_train)
+        
+    def train_regressor(self):
+        X_poly = self.poly_reg.fit_transform(self.X_train)
+        self.regressor.fit(X_poly, self.y_train)
         
     def score(self):
         y_pred = self.regressor.predict(self.poly_reg.transform(self.X_test))
